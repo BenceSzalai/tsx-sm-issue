@@ -60,4 +60,4 @@ Error: x
 
 ```
 
-The only difference between the two case is that `notok.ts` has a dynamic import (`await import('some-package')`), while `ok.tsx` has none.
+The only difference between the two cases is that `notok.ts` has a dynamic import (`await import('some-package')`), while `ok.tsx` has none.
