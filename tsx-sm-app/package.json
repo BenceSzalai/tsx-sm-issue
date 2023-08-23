@@ -1,0 +1,22 @@
+{
+  "name": "tsx-sm-app",
+  "version": "0.0.1",
+  "description": "Issue dummy package.",
+  "author": {
+    "name": "Bence Szalai",
+    "email": "bence@sbnc.eu",
+    "url": "https://sbnc.eu/"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts",
+    "start2": "tsx index-ok.ts"
+  },
+  "dependencies": {
+    "tsx-sm-package": "file:../tsx-sm-package"
+  },
+  "devDependencies": {
+  }
+}

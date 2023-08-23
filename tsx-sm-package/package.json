@@ -1,0 +1,30 @@
+{
+  "name": "tsx-sm-package",
+  "version": "0.0.1",
+  "description": "Issue dummy package.",
+  "author": {
+    "name": "Bence Szalai",
+    "email": "bence@sbnc.eu",
+    "url": "https://sbnc.eu/"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "tsc:build": "tsc --b --verbose"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "exports": {
+    "./*.js": "./build/*.js"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "build/*"
+      ]
+    }
+  }
+}
