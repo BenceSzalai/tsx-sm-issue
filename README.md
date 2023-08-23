@@ -14,9 +14,10 @@ cd tsx-sm-package
 npm install
 npm run tsc:build
 
-cd ../tsx-sm-app
+cd ..
+
+cd tsx-sm-app
 npm install
-npm start
 ```
 
 ### Issue
