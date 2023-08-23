@@ -7,7 +7,7 @@
     "email": "bence@sbnc.eu",
     "url": "https://sbnc.eu/"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {
