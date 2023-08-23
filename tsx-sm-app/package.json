@@ -1,7 +1,7 @@
 {
   "name": "tsx-sm-app",
   "version": "0.0.1",
-  "description": "Issue dummy package.",
+  "description": "Issue dummy app.",
   "author": {
     "name": "Bence Szalai",
     "email": "bence@sbnc.eu",
@@ -14,7 +14,9 @@
     "tsx:withDynImport": "tsx ts-w-dyn-imp.ts",
     "tsx:withoutDynImport": "tsx ts-wo-dyn-imp.ts",
     "node:withDynImport": "node --enable-source-maps js-w-dyn-imp.js",
-    "node:withoutDynImport": "node --enable-source-maps js-wo-dyn-imp.js"
+    "node:withoutDynImport": "node --enable-source-maps js-wo-dyn-imp.js",
+    "esmLoader:withDynImport": "node --loader @esbuild-kit/esm-loader --enable-source-maps js-w-dyn-imp.js",
+    "esmLoader:withoutDynImport": "node --loader @esbuild-kit/esm-loader --enable-source-maps js-wo-dyn-imp.js"
   },
   "dependencies": {
     "tsx-sm-package": "file:../tsx-sm-package"

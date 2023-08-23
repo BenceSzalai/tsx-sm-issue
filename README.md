@@ -1,5 +1,5 @@
 
-# TSX SourceMap Issue Demo
+# ESM Loader / TSX SourceMap Issue Demo
 
 ## Steps to reproduce
 
@@ -22,8 +22,9 @@ npm install
 
 ### Issue
 
-The first `npm run tsx:withDynImport` will show the `notok` file as a `.js` file with the line numbers corresponding to the state in `build/notok.js`:
+The `npm run tsx:withDynImport` and the `npm run esmLoader:withDynImport` will show the `notok` file as a `.js` file with the line numbers corresponding to the state in `build/notok.js`:
 
+#### TSX
 ```
 > tsx-sm-app@0.0.1 start
 > tsx ts-w-dyn-imp.ts
@@ -41,7 +42,29 @@ Error: x
     at async handleMainPromise (node:internal/modules/run_main:66:12)
 ```
 
-However, running `npm run tsx:withoutDynImport` will show the `ok` file as a `.ts` file with the line numbers corresponding to the state in `src/ok.tsx`:
+#### ESM Loader
+```
+(node:85624) ExperimentalWarning: Custom ESM Loaders is an experimental feature and might change at any time
+/.../tsx-sm-issue/tsx-sm-package/build/notok.js:2
+    throw new Error('x');
+          ^
+
+Error: x
+    at foo (/.../tsx-sm-issue/tsx-sm-package/build/notok.js:2:11)
+    at file:///.../tsx-sm-issue/tsx-sm-app/js-w-dyn-imp.js:4:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:192:25)
+    at async CustomizedModuleLoader.import (node:internal/modules/esm/loader:228:24)
+    at async loadESM (node:internal/process/esm_loader:40:7)
+    at async handleMainPromise (node:internal/modules/run_main:66:12)
+
+```
+
+### Comparing to importing file without dynamic import
+
+However, running `npm run tsx:withoutDynImport` or `npm run esmLoader:withoutDynImport` will show the `ok` file as a `.ts` file with the line numbers corresponding to the state in `src/ok.tsx`:
+
+#### TSX
+
 ```
 > tsx-sm-app@0.0.1 start2
 > tsx ts-wo-dyn-imp.ts
@@ -60,11 +83,30 @@ Error: x
 
 ```
 
+#### ESM Loader
+```
+(node:85460) ExperimentalWarning: Custom ESM Loaders is an experimental feature and might change at any time
+
+/.../tsx-sm-issue/tsx-sm-package/src/ok.ts:4
+  throw new Error('x')
+        ^
+
+Error: x
+    at foo (/.../tsx-sm-issue/tsx-sm-package/src/ok.ts:4:9)
+    at file:///.../tsx-sm-issue/tsx-sm-app/js-wo-dyn-imp.js:4:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:192:25)
+    at async CustomizedModuleLoader.import (node:internal/modules/esm/loader:228:24)
+    at async loadESM (node:internal/process/esm_loader:40:7)
+    at async handleMainPromise (node:internal/modules/run_main:66:12)
+
+
+```
+
 The only difference between the two cases is that `notok.ts` has a dynamic import (`await import('some-package')`), while `ok.tsx` has none.
 
-### Narrowing Node.js vs. TSX
+### Comparing to native Node.js behaviour
 
-Indeed, we may assume the issue is with Node.js instead of TSX, however if the below two other scripts are executed, we can see that sourcemaps are working fine with pure Node.js even with dynamic imports in the dependency tree:
+Indeed, we may assume the issue is with Node.js instead of TSX / ESM Loader, however if the below two other scripts are executed, we can see that sourcemaps are working fine with pure Node.js even with dynamic imports in the dependency tree:
 
 `npm run node:withDynImport`
 ```
