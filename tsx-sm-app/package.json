@@ -11,8 +11,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "tsx index.ts",
-    "start2": "tsx index-ok.ts"
+    "tsx:withDynImport": "tsx ts-w-dyn-imp.ts",
+    "tsx:withoutDynImport": "tsx ts-wo-dyn-imp.ts",
+    "node:withDynImport": "node --enable-source-maps js-w-dyn-imp.js",
+    "node:withoutDynImport": "node --enable-source-maps js-wo-dyn-imp.js"
   },
   "dependencies": {
     "tsx-sm-package": "file:../tsx-sm-package"

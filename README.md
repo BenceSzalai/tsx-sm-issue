@@ -17,16 +17,15 @@ npm run tsc:build
 cd ../tsx-sm-app
 npm install
 npm start
-npm run start2
 ```
 
-### Results
+### Issue
 
-The first `npm start` will show the `notok` file as a JS file with the line numbers corresponding to the state in `build/notok.js`:
+The first `npm run tsx:withDynImport` will show the `notok` file as a `.js` file with the line numbers corresponding to the state in `build/notok.js`:
 
 ```
 > tsx-sm-app@0.0.1 start
-> tsx index.ts
+> tsx ts-w-dyn-imp.ts
 
 /.../tsx-sm-issue/tsx-sm-package/build/notok.js:2
     throw new Error('x');
@@ -34,17 +33,17 @@ The first `npm start` will show the `notok` file as a JS file with the line numb
 
 Error: x
     at foo (/.../tsx-sm-issue/tsx-sm-package/build/notok.js:2:11)
-    at <anonymous> (/.../tsx-sm-issue/tsx-sm-app/index.ts:4:1)
+    at <anonymous> (/.../tsx-sm-issue/tsx-sm-app/ts-w-dyn-imp.ts:4:1)
     at ModuleJob.run (node:internal/modules/esm/module_job:192:25)
     at async CustomizedModuleLoader.import (node:internal/modules/esm/loader:228:24)
     at async loadESM (node:internal/process/esm_loader:40:7)
     at async handleMainPromise (node:internal/modules/run_main:66:12)
 ```
 
-However, running `npm run start2` will show the `ok` file as a TS file with the line numbers corresponding to the state in `src/ok.tsx`:
+However, running `npm run tsx:withoutDynImport` will show the `ok` file as a `.ts` file with the line numbers corresponding to the state in `src/ok.tsx`:
 ```
 > tsx-sm-app@0.0.1 start2
-> tsx index-ok.ts
+> tsx ts-wo-dyn-imp.ts
 
 /.../tsx-sm-issue/tsx-sm-package/src/ok.ts:4
   throw new Error('x')
@@ -52,7 +51,7 @@ However, running `npm run start2` will show the `ok` file as a TS file with the 
 
 Error: x
     at foo (/.../tsx-sm-issue/tsx-sm-package/src/ok.ts:4:9)
-    at <anonymous> (/.../tsx-sm-issue/tsx-sm-app/index-ok.ts:4:1)
+    at <anonymous> (/.../tsx-sm-issue/tsx-sm-app/ts-wo-dyn-imp.ts:4:1)
     at ModuleJob.run (node:internal/modules/esm/module_job:192:25)
     at async CustomizedModuleLoader.import (node:internal/modules/esm/loader:228:24)
     at async loadESM (node:internal/process/esm_loader:40:7)
@@ -61,3 +60,34 @@ Error: x
 ```
 
 The only difference between the two cases is that `notok.ts` has a dynamic import (`await import('some-package')`), while `ok.tsx` has none.
+
+### Narrowing Node.js vs. TSX
+
+Indeed, we may assume the issue is with Node.js instead of TSX, however if the below two other scripts are executed, we can see that sourcemaps are working fine with pure Node.js even with dynamic imports in the dependency tree:
+
+`npm run node:withDynImport`
+```
+> tsx-sm-app@0.0.1 node:withDynImport
+> node --enable-source-maps js-w-dyn-imp.js
+
+/.../tsx-sm-issue/tsx-sm-package/src/notok.ts:4
+  throw new Error('x')
+        ^
+
+Error: x
+    at foo (/.../tsx-sm-issue/tsx-sm-package/src/notok.ts:4:9)
+    at file:///.../tsx-sm-issue/tsx-sm-app/js-w-dyn-imp.js:4:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:192:25)
+    at async DefaultModuleLoader.import (node:internal/modules/esm/loader:228:24)
+    at async loadESM (node:internal/process/esm_loader:40:7)
+    at async handleMainPromise (node:internal/modules/run_main:66:12)
+
+
+```
+The output shows the `notok` file as a `.ts` file with the line numbers corresponding to the state in `src/notok.ts`
+
+`npm run node:withoutDynImport`
+Same as above, but this works even with TSX so only included for completeness: The `ok` file as a `.ts` file with the line numbers corresponding to the state in `src/ok.ts`
+
+#### Note
+The target files of the two Node.js and the two TSX scripts are identical, except for the file extension.
